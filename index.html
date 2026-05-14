@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Exam Routine Finder — Rajshahi Polytechnic Institute</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:       #0a1628;
+    --navy-mid:   #112244;
+    --navy-light: #1a3560;
+    --blue:       #1d6ff2;
+    --blue-glow:  #3b8bff;
+    --sky:        #e8f1ff;
+    --white:      #ffffff;
+    --glass-bg:   rgba(255,255,255,0.07);
+    --glass-bdr:  rgba(255,255,255,0.14);
+    --text-main:  #e8f0ff;
+    --text-muted: #8aa4cc;
+    --text-dim:   #506080;
+    --accent:     #f0b429;
+    --success:    #22d3a5;
+    --card-bg:    rgba(17,34,68,0.7);
+    --radius:     14px;
+    --radius-sm:  8px;
+    --shadow:     0 8px 40px rgba(0,0,0,0.35);
+    --shadow-sm:  0 2px 12px rgba(0,0,0,0.2);
+    --transition: 0.22s cubic-bezier(.4,0,.2,1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: var(--navy);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Background ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 0%,  rgba(29,111,242,.18) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 100%, rgba(29,111,242,.12) 0%, transparent 55%),
+      linear-gradient(160deg, #0a1628 0%, #0d1f3c 50%, #0a1628 100%);
+    pointer-events: none;
+  }
+  body::after {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size: 36px 36px;
+    pointer-events: none;
+  }
+
+  /* ── Layout ── */
+  .wrapper {
+    position: relative; z-index: 1;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+  }
+
+  /* ── Header ── */
+  header {
+    padding: 40px 0 32px;
+    text-align: center;
+  }
+  .inst-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-bdr);
+    border-radius: 99px;
+    padding: 6px 16px;
+    font-size: 11px; font-weight: 600; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--blue-glow);
+    margin-bottom: 18px;
+    backdrop-filter: blur(10px);
+  }
+  .inst-badge svg { width:14px; height:14px; }
+  h1 {
+    font-size: clamp(24px, 5vw, 42px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    background: linear-gradient(135deg, #fff 30%, #7ab3ff 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+  }
+  .subtitle {
+    font-size: 14px; color: var(--text-muted); font-weight: 500;
+    letter-spacing: .02em;
+  }
+
+  /* ── Controls Card ── */
+  .controls-card {
+    background: var(--card-bg);
+    border: 1px solid var(--glass-bdr);
+    border-radius: var(--radius);
+    padding: 28px 28px 24px;
+    backdrop-filter: blur(20px);
+    box-shadow: var(--shadow);
+    margin-bottom: 28px;
+  }
+  .controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  @media (max-width: 560px) { .controls-grid { grid-template-columns: 1fr; } }
+
+  .field-group { display: flex; flex-direction: column; gap: 7px; }
+  label {
+    font-size: 11px; font-weight: 700; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--text-muted);
+  }
+  select {
+    appearance: none; -webkit-appearance: none;
+    background: rgba(255,255,255,.06);
+    border: 1px solid var(--glass-bdr);
+    border-radius: var(--radius-sm);
+    padding: 11px 40px 11px 14px;
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238aa4cc' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center;
+  }
+  select:focus { outline: none; border-color: var(--blue-glow); background-color: rgba(29,111,242,.08); }
+  select option { background: var(--navy-mid); color: var(--text-main); }
+
+  .search-row { display: flex; gap: 10px; align-items: center; }
+  .search-wrap {
+    flex: 1; position: relative;
+  }
+  .search-wrap svg {
+    position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+    color: var(--text-dim); pointer-events: none; width: 15px; height: 15px;
+  }
+  input[type="text"] {
+    width: 100%;
+    background: rgba(255,255,255,.06);
+    border: 1px solid var(--glass-bdr);
+    border-radius: var(--radius-sm);
+    padding: 11px 14px 11px 38px;
+    font-family: inherit; font-size: 14px;
+    color: var(--text-main);
+    transition: border-color var(--transition);
+  }
+  input[type="text"]::placeholder { color: var(--text-dim); }
+  input[type="text"]:focus { outline: none; border-color: var(--blue-glow); }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 11px 18px;
+    border: none; border-radius: var(--radius-sm);
+    font-family: inherit; font-size: 13px; font-weight: 700;
+    cursor: pointer; transition: all var(--transition);
+    white-space: nowrap;
+  }
+  .btn-print {
+    background: rgba(255,255,255,.09);
+    border: 1px solid var(--glass-bdr);
+    color: var(--text-main);
+  }
+  .btn-print:hover { background: rgba(255,255,255,.14); }
+  .btn-reset {
+    background: none;
+    border: 1px solid rgba(255,255,255,.1);
+    color: var(--text-muted);
+  }
+  .btn-reset:hover { color: var(--text-main); border-color: var(--glass-bdr); }
+
+  /* ── Results area ── */
+  #results { animation: fadeUp .3s ease; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Summary bar ── */
+  .summary-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px;
+    margin-bottom: 16px;
+  }
+  .summary-label {
+    font-size: 13px; font-weight: 600; color: var(--text-muted);
+  }
+  .summary-label span { color: var(--blue-glow); }
+  .tag-list { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tag {
+    font-size: 11px; font-weight: 700; letter-spacing: .05em;
+    padding: 4px 12px; border-radius: 99px;
+    background: rgba(29,111,242,.15); border: 1px solid rgba(29,111,242,.3);
+    color: var(--blue-glow);
+  }
+  .tag.time { background: rgba(34,211,165,.1); border-color: rgba(34,211,165,.25); color: var(--success); }
+
+  /* ── Table (desktop) ── */
+  .table-wrap {
+    overflow: hidden;
+    border-radius: var(--radius);
+    border: 1px solid var(--glass-bdr);
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(12px);
+  }
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  thead tr {
+    background: rgba(29,111,242,.15);
+    border-bottom: 1px solid rgba(29,111,242,.2);
+  }
+  th {
+    padding: 13px 16px;
+    text-align: left;
+    font-size: 10.5px; font-weight: 700; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--blue-glow);
+    white-space: nowrap;
+  }
+  tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,.05);
+    background: rgba(10,22,40,.4);
+    transition: background var(--transition);
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(29,111,242,.08); }
+  tbody tr:nth-child(odd) { background: rgba(17,34,68,.5); }
+  tbody tr:nth-child(odd):hover { background: rgba(29,111,242,.1); }
+  td { padding: 13px 16px; vertical-align: middle; }
+  .cell-date { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+  .cell-day { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+  .cell-code { font-family: 'DM Mono', monospace; font-size: 11.5px; color: var(--accent); }
+  .cell-name { font-weight: 600; color: var(--text-main); }
+  .cell-tech { font-size: 12px; color: var(--text-muted); }
+  .sl { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-dim); text-align: center; }
+
+  /* ── Mobile Cards ── */
+  .card-list { display: none; flex-direction: column; gap: 10px; }
+  .exam-card {
+    background: var(--card-bg);
+    border: 1px solid var(--glass-bdr);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    backdrop-filter: blur(12px);
+    transition: transform var(--transition), border-color var(--transition);
+    animation: fadeUp .25s ease;
+  }
+  .exam-card:hover { transform: translateY(-2px); border-color: rgba(29,111,242,.3); }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+  .card-subject { font-size: 14px; font-weight: 700; color: var(--text-main); line-height: 1.3; }
+  .card-code { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); background: rgba(240,180,41,.1); border: 1px solid rgba(240,180,41,.2); padding: 3px 9px; border-radius: 99px; white-space: nowrap; }
+  .card-meta { display: flex; flex-wrap: wrap; gap: 6px; }
+  .meta-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 99px;
+  }
+  .chip-date { background: rgba(255,255,255,.07); color: var(--text-muted); border: 1px solid rgba(255,255,255,.1); }
+  .chip-day  { background: rgba(255,255,255,.04); color: var(--text-dim);  border: 1px solid rgba(255,255,255,.07); }
+  .chip-sl   { background: rgba(29,111,242,.1);   color: var(--blue-glow); border: 1px solid rgba(29,111,242,.2); }
+
+  /* responsive switch */
+  @media (max-width: 640px) {
+    .table-wrap { display: none; }
+    .card-list { display: flex; }
+  }
+
+  /* ── Empty / placeholder ── */
+  .empty-state {
+    text-align: center; padding: 60px 20px;
+    color: var(--text-dim);
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 14px; opacity: .5; }
+  .empty-state p { font-size: 14px; }
+  .empty-state strong { color: var(--text-muted); display: block; font-size: 16px; margin-bottom: 6px; }
+
+  /* ── Print ── */
+  @media print {
+    body { background: #fff; color: #000; }
+    body::before, body::after { display: none; }
+    .controls-card, .btn, .summary-bar .tag-list { display: none !important; }
+    .table-wrap { display: block !important; box-shadow: none; border: 1px solid #ccc; }
+    .card-list  { display: none !important; }
+    th { color: #1d6ff2; }
+    td { color: #111; }
+    .cell-code { color: #b8860b; }
+    h1 { -webkit-text-fill-color: #0a1628; color: #0a1628; }
+    .subtitle, .summary-label { color: #555; }
+    .inst-badge { color: #1d6ff2; border-color: #1d6ff2; background: none; }
+    header { padding: 20px 0 16px; }
+    tbody tr { background: #fff !important; }
+    tbody tr:nth-child(odd) { background: #f5f8ff !important; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- Header -->
+  <header>
+    <div class="inst-badge">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+      </svg>
+      Rajshahi Polytechnic Institute
+    </div>
+    <h1>Mid-term Exam<br>Routine Finder</h1>
+    <p class="subtitle">June 2026 &nbsp;·&nbsp; Select your semester &amp; department to view schedule</p>
+  </header>
+
+  <!-- Controls -->
+  <div class="controls-card">
+    <div class="controls-grid">
+      <div class="field-group">
+        <label>Semester</label>
+        <select id="semSelect">
+          <option value="">— Choose Semester —</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <label>Department (Technology)</label>
+        <select id="deptSelect" disabled>
+          <option value="">— Choose Department —</option>
+        </select>
+      </div>
+    </div>
+    <div class="search-row">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="Search subject name or code…" disabled />
+      </div>
+      <button class="btn btn-print" onclick="window.print()" title="Print routine">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/>
+          <rect x="6" y="14" width="12" height="8"/>
+        </svg>
+        Print
+      </button>
+      <button class="btn btn-reset" id="resetBtn" onclick="resetAll()" title="Reset filters">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
+        </svg>
+        Reset
+      </button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div id="results"></div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════
+const DATA = {
+  "institution": "Rajshahi Polytechnic Institute",
+  "exam_type": "Mid-term Examination 2026",
+  "schedules": [
+    {
+      "semester": "2nd Semester",
+      "time": "10:30 AM",
+      "routine": [
+        { "date": "04/06/2026", "day": "Thursday", "subject_code": "25921", "subject_name": "Mathematics-2", "technology": "All Technology" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "25912", "subject_name": "Physics-1", "technology": "Civil" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "25922", "subject_name": "Physics-2", "technology": "Electrical, Mechanical, Electromedical & Mechatronics" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "27121", "subject_name": "Power Equipment Management and Safety", "technology": "Power" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "26821", "subject_name": "Electronic Devices and Circuits", "technology": "Electronics" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "28521", "subject_name": "Python Programming", "technology": "Computer Science" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "25721", "subject_name": "Bangla-2", "technology": "All Technology" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "25722", "subject_name": "English-2", "technology": "All Technology" },
+        { "date": "10/06/2026", "day": "Wednesday", "subject_code": "26811", "subject_name": "Basic Electronics", "technology": "Civil, Electrical, Computer Science, Mechatronics, Electromedical" },
+        { "date": "10/06/2026", "day": "Wednesday", "subject_code": "26711", "subject_name": "Basic Electricity", "technology": "Mechanical & Power" },
+        { "date": "10/06/2026", "day": "Wednesday", "subject_code": "25811", "subject_name": "Social Science", "technology": "Electronics" },
+        { "date": "11/06/2026", "day": "Thursday", "subject_code": "25913", "subject_name": "Chemistry", "technology": "Mechanical, Power, Electrical, Computer Science" },
+        { "date": "11/06/2026", "day": "Thursday", "subject_code": "26421", "subject_name": "Civil Engineering Drawing", "technology": "Civil" },
+        { "date": "11/06/2026", "day": "Thursday", "subject_code": "26722", "subject_name": "Electrical Engineering Drawing", "technology": "Electrical" },
+        { "date": "11/06/2026", "day": "Thursday", "subject_code": "28621", "subject_name": "Basic Biomedical Engineering", "technology": "Electromedical" },
+        { "date": "11/06/2026", "day": "Thursday", "subject_code": "27012", "subject_name": "Machine Shop Practice-1", "technology": "Mechatronics" },
+        { "date": "11/06/2026", "day": "Thursday", "subject_code": "27021", "subject_name": "Mechanical Engineering Drawing", "technology": "Mechanical & Mechatronics" },
+        { "date": "14/06/2026", "day": "Sunday", "subject_code": "26721", "subject_name": "Electrical Circuits-1", "technology": "Electrical, Electronics, Electromedical" }
+      ]
+    },
+    {
+      "semester": "3rd Semester",
+      "time": "9:00 AM",
+      "routine": [
+        { "date": "04/06/2026", "day": "Thursday", "subject_code": "25931", "subject_name": "Mathematics-3", "technology": "All Technology" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "26731", "subject_name": "Electrical Circuits-2", "technology": "Electrical, Electronics, Electromedical" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "27131", "subject_name": "RAC Cycles and Components", "technology": "Mechanical, Power" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "28531", "subject_name": "Application Development Using Python", "technology": "Computer Science" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "26821", "subject_name": "Electronic Devices and Circuits", "technology": "Mechatronics" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "26431", "subject_name": "Structural Mechanics", "technology": "Civil" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "25831", "subject_name": "Business Communication", "technology": "Civil, Mechanical, Mechatronics" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "26732", "subject_name": "Electrical Appliances", "technology": "Electrical" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "28632", "subject_name": "Operating Room Equipment", "technology": "Electromedical" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "26811", "subject_name": "Basic Electronics", "technology": "Power" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "26831", "subject_name": "Digital Electronics-1", "technology": "Computer Science, Electronics" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "25922", "subject_name": "Physics-2", "technology": "Civil, Electronics, Computer Science, Power" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "25913", "subject_name": "Chemistry", "technology": "Electrical, Electromedical, Mechatronics" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "27032", "subject_name": "Machine Shop Practice-2", "technology": "Mechanical" },
+        { "date": "10/06/2026", "day": "Wednesday", "subject_code": "25811", "subject_name": "Social Science", "technology": "Mechanical, Computer Science, Electromedical, Mechatronics" },
+        { "date": "10/06/2026", "day": "Wednesday", "subject_code": "26432", "subject_name": "Surveying-1", "technology": "Civil" },
+        { "date": "10/06/2026", "day": "Wednesday", "subject_code": "26733", "subject_name": "Industrial Electronics", "technology": "Electrical" },
+        { "date": "10/06/2026", "day": "Wednesday", "subject_code": "26833", "subject_name": "Power Electronics", "technology": "Electronics" },
+        { "date": "10/06/2026", "day": "Wednesday", "subject_code": "27012", "subject_name": "Machine Shop Practice-1", "technology": "Power" },
+        { "date": "11/06/2026", "day": "Thursday", "subject_code": "26433", "subject_name": "Construction Process-1", "technology": "Civil" },
+        { "date": "11/06/2026", "day": "Thursday", "subject_code": "28533", "subject_name": "IT Support Services", "technology": "Computer Science" },
+        { "date": "11/06/2026", "day": "Thursday", "subject_code": "28631", "subject_name": "Medical Transducer and Sensors", "technology": "Electromedical" },
+        { "date": "11/06/2026", "day": "Thursday", "subject_code": "27031", "subject_name": "Mechanical Engineering Materials", "technology": "Mechanical, Mechatronics" },
+        { "date": "11/06/2026", "day": "Thursday", "subject_code": "27131", "subject_name": "Engineering Thermodynamics", "technology": "Power" },
+        { "date": "14/06/2026", "day": "Sunday", "subject_code": "29232", "subject_name": "Basic Mechanics", "technology": "Mechatronics" }
+      ]
+    },
+    {
+      "semester": "5th Semester",
+      "time": "2:00 PM",
+      "routine": [
+        { "date": "04/06/2026", "day": "Thursday", "subject_code": "26451", "subject_name": "Estimating and Costing-1", "technology": "Civil" },
+        { "date": "04/06/2026", "day": "Thursday", "subject_code": "26751", "subject_name": "DC Machine-1", "technology": "Electrical" },
+        { "date": "04/06/2026", "day": "Thursday", "subject_code": "26851", "subject_name": "Television Engineering", "technology": "Electronics" },
+        { "date": "04/06/2026", "day": "Thursday", "subject_code": "28551", "subject_name": "System Analysis and Design", "technology": "Computer Science" },
+        { "date": "04/06/2026", "day": "Thursday", "subject_code": "27051", "subject_name": "Industrial Management", "technology": "Mechanical, Power" },
+        { "date": "04/06/2026", "day": "Thursday", "subject_code": "28651", "subject_name": "Diagnostic Imaging Equipment", "technology": "Electromedical" },
+        { "date": "04/06/2026", "day": "Thursday", "subject_code": "29251", "subject_name": "Programmable Logic Controller", "technology": "Mechatronics" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "25951", "subject_name": "Mathematics-4", "technology": "All Technology" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "26452", "subject_name": "Transportation Engineering-1", "technology": "Civil" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "26752", "subject_name": "Electrical Drives and Traction", "technology": "Electrical" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "26852", "subject_name": "Cable TV and Satellite Communication", "technology": "Electronics" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "28552", "subject_name": "Database Management System", "technology": "Computer Science" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "27052", "subject_name": "Welding Technology", "technology": "Mechanical, Power" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "28652", "subject_name": "Patient Care Equipment", "technology": "Electromedical" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "29252", "subject_name": "Hydraulics and Pneumatics", "technology": "Mechatronics" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "26453", "subject_name": "Structural Design-1", "technology": "Civil" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "26753", "subject_name": "Power Plant Engineering", "technology": "Electrical" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "26853", "subject_name": "Microprocessor and Interfacing", "technology": "Electronics, Mechatronics" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "28553", "subject_name": "Data Structure and Algorithm", "technology": "Computer Science" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "28653", "subject_name": "Physiotherapy Equipment", "technology": "Electromedical" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "27053", "subject_name": "Advanced Welding-1", "technology": "Mechanical, Power" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "29251", "subject_name": "PLC", "technology": "Mechatronics" },
+        { "date": "14/06/2026", "day": "Sunday", "subject_code": "27054", "subject_name": "Foundry and Pattern Making", "technology": "Mechanical" },
+        { "date": "14/06/2026", "day": "Sunday", "subject_code": "27151", "subject_name": "Auto Electricity Electronics and Automation", "technology": "Power" },
+        { "date": "14/06/2026", "day": "Sunday", "subject_code": "28654", "subject_name": "Biomedical Instruments", "technology": "Electromedical" },
+        { "date": "14/06/2026", "day": "Sunday", "subject_code": "26761", "subject_name": "AC Machine-1", "technology": "Electrical" },
+        { "date": "14/06/2026", "day": "Sunday", "subject_code": "26845", "subject_name": "Digital Electronics", "technology": "Mechatronics" },
+        { "date": "14/06/2026", "day": "Sunday", "subject_code": "26451", "subject_name": "Foundation Engineering", "technology": "Civil" },
+        { "date": "14/06/2026", "day": "Sunday", "subject_code": "26851", "subject_name": "Television Engineering", "technology": "Electronics" },
+        { "date": "16/06/2026", "day": "Monday", "subject_code": "28662", "subject_name": "Fiber Optics and Laser in Medical Field", "technology": "Electronics, Electromedical" },
+        { "date": "16/06/2026", "day": "Monday", "subject_code": "27172", "subject_name": "Fundamental of Hybrid and Electric Vehicle", "technology": "Mechatronics" }
+      ]
+    },
+    {
+      "semester": "7th Semester",
+      "time": "12:00 PM",
+      "routine": [
+        { "date": "04/06/2026", "day": "Thursday", "subject_code": "26474", "subject_name": "Design of Structure-2", "technology": "Civil" },
+        { "date": "04/06/2026", "day": "Thursday", "subject_code": "26771", "subject_name": "AC Machine-2", "technology": "Electrical & Electronics" },
+        { "date": "04/06/2026", "day": "Thursday", "subject_code": "27071", "subject_name": "Design of Machine Elements", "technology": "Mechanical, Power & Mechatronics" },
+        { "date": "04/06/2026", "day": "Thursday", "subject_code": "28574", "subject_name": "Multimedia and Animation", "technology": "Computer Science" },
+        { "date": "04/06/2026", "day": "Thursday", "subject_code": "28671", "subject_name": "Advanced Biomedical Equipment", "technology": "Electromedical" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "26471", "subject_name": "Construction Management and Documentation", "technology": "Civil" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "26772", "subject_name": "TD-2", "technology": "Electrical" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "27074", "subject_name": "Production Planning and Control", "technology": "Mechanical & Mechatronics" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "26871", "subject_name": "Microwave Radar and Navigation Aids", "technology": "Electronics" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "28572", "subject_name": "Network Administration and Services", "technology": "Computer Science" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "27172", "subject_name": "Fundamental of Hybrid and Electric Vehicle", "technology": "Power" },
+        { "date": "07/06/2026", "day": "Sunday", "subject_code": "28674", "subject_name": "Medical Physics and Nuclear Instrument", "technology": "Electromedical" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "26472", "subject_name": "Sanitary Engineering", "technology": "Civil" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "25831", "subject_name": "Business Communication", "technology": "Electrical, Electronics, Electromedical" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "27073", "subject_name": "Heat Treatment of Metal", "technology": "Mechanical & Power" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "29272", "subject_name": "Industrial Automation System Design", "technology": "Mechatronics" },
+        { "date": "08/06/2026", "day": "Monday", "subject_code": "28574", "subject_name": "App Development Project", "technology": "Computer Science" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "26473", "subject_name": "Transportation Engineering-2", "technology": "Civil" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "26773", "subject_name": "Switchgear and Protection", "technology": "Electrical, Electromedical" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "29231", "subject_name": "Mechatronics and PLC", "technology": "Mechanical" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "26872", "subject_name": "Industrial Automation and PLC", "technology": "Electronics" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "28573", "subject_name": "Cyber Security and Ethics", "technology": "Computer Science" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "27171", "subject_name": "Service Station Operation and Estimating", "technology": "Power" },
+        { "date": "09/06/2026", "day": "Tuesday", "subject_code": "29273", "subject_name": "Network and Communication", "technology": "Mechatronics" },
+        { "date": "10/06/2026", "day": "Wednesday", "subject_code": "25851", "subject_name": "Principal of Marketing", "technology": "Civil & Power" },
+        { "date": "10/06/2026", "day": "Wednesday", "subject_code": "26775", "subject_name": "Automation Engineering and PLC", "technology": "Electrical" },
+        { "date": "10/06/2026", "day": "Wednesday", "subject_code": "26873", "subject_name": "Control System and Robotics", "technology": "Electronics" },
+        { "date": "10/06/2026", "day": "Wednesday", "subject_code": "28571", "subject_name": "Digital Marketing Technique", "technology": "Computer Science" },
+        { "date": "10/06/2026", "day": "Wednesday", "subject_code": "27072", "subject_name": "Tool Design", "technology": "Mechanical" },
+        { "date": "10/06/2026", "day": "Wednesday", "subject_code": "28672", "subject_name": "ICT and CNC Equipment", "technology": "Electromedical" },
+        { "date": "10/06/2026", "day": "Wednesday", "subject_code": "29274", "subject_name": "Robotics Manufacturing and Process Engineering", "technology": "Mechatronics" },
+        { "date": "11/06/2026", "day": "Thursday", "subject_code": "25853", "subject_name": "Innovation and Entrepreneurship", "technology": "All Technology" },
+        { "date": "14/06/2026", "day": "Sunday", "subject_code": "26475", "subject_name": "Estimating and Costing-2", "technology": "Civil" }
+      ]
+    }
+  ]
+};
+
+// ═══════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════
+
+/** Parse technology string into normalized array of dept names */
+function parseTech(techStr) {
+  return techStr
+    .split(/[,&]+/)
+    .map(s => s.trim())
+    .filter(Boolean);
+}
+
+/** Check if a dept string matches a given dept selection */
+function techMatches(techStr, dept) {
+  if (dept === 'All Technology') return true;
+  const parts = parseTech(techStr);
+  if (parts.includes('All Technology')) return true;
+  return parts.some(p => p.toLowerCase() === dept.toLowerCase());
+}
+
+/** Collect all unique departments for a semester */
+function getDepartmentsForSemester(semName) {
+  const sem = DATA.schedules.find(s => s.semester === semName);
+  if (!sem) return [];
+  const depts = new Set();
+  sem.routine.forEach(r => {
+    if (r.technology === 'All Technology') {
+      // handled separately — means all depts; skip adding "All Technology" as option
+      return;
+    }
+    parseTech(r.technology).forEach(d => depts.add(d));
+  });
+  return [...depts].sort();
+}
+
+// ═══════════════════════════════════════════════════
+//  DOM REFS
+// ═══════════════════════════════════════════════════
+const semSelect    = document.getElementById('semSelect');
+const deptSelect   = document.getElementById('deptSelect');
+const searchInput  = document.getElementById('searchInput');
+const resultsDiv   = document.getElementById('results');
+
+// ═══════════════════════════════════════════════════
+//  INIT SEMESTER DROPDOWN
+// ═══════════════════════════════════════════════════
+DATA.schedules.forEach(s => {
+  const o = document.createElement('option');
+  o.value = s.semester; o.textContent = s.semester;
+  semSelect.appendChild(o);
+});
+
+// ═══════════════════════════════════════════════════
+//  EVENT LISTENERS
+// ═══════════════════════════════════════════════════
+semSelect.addEventListener('change', () => {
+  const sem = semSelect.value;
+  deptSelect.innerHTML = '<option value="">— Choose Department —</option>';
+  deptSelect.disabled = !sem;
+  searchInput.disabled = !sem;
+  searchInput.value = '';
+
+  if (sem) {
+    const depts = getDepartmentsForSemester(sem);
+    depts.forEach(d => {
+      const o = document.createElement('option');
+      o.value = d; o.textContent = d;
+      deptSelect.appendChild(o);
+    });
+  }
+  renderResults();
+});
+
+deptSelect.addEventListener('change', renderResults);
+searchInput.addEventListener('input', renderResults);
+
+// ═══════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════
+function renderResults() {
+  const semName = semSelect.value;
+  const dept    = deptSelect.value;
+  const query   = searchInput.value.trim().toLowerCase();
+
+  if (!semName) {
+    resultsDiv.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <strong>Select a Semester to begin</strong>
+        <p>Choose your semester and department from the dropdowns above.</p>
+      </div>`;
+    return;
+  }
+  if (!dept) {
+    resultsDiv.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🏛️</div>
+        <strong>Now select your Department</strong>
+        <p>Pick your technology / department from the second dropdown.</p>
+      </div>`;
+    return;
+  }
+
+  const semData = DATA.schedules.find(s => s.semester === semName);
+  let rows = semData.routine.filter(r => techMatches(r.technology, dept));
+
+  if (query) {
+    rows = rows.filter(r =>
+      r.subject_name.toLowerCase().includes(query) ||
+      r.subject_code.toLowerCase().includes(query)
+    );
+  }
+
+  if (rows.length === 0) {
+    resultsDiv.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <strong>No exams found</strong>
+        <p>No matching subjects for your selection${query ? ` matching "<em>${query}</em>"` : ''}.</p>
+      </div>`;
+    return;
+  }
+
+  // Summary bar
+  const summaryHTML = `
+    <div class="summary-bar">
+      <div class="summary-label">
+        Showing <span>${rows.length}</span> exam${rows.length !== 1 ? 's' : ''}
+      </div>
+      <div class="tag-list">
+        <span class="tag">${semName}</span>
+        <span class="tag">${dept}</span>
+        <span class="tag time">⏰ ${semData.time}</span>
+      </div>
+    </div>`;
+
+  // Table (desktop)
+  const tableRows = rows.map((r, i) => `
+    <tr>
+      <td class="sl">${i + 1}</td>
+      <td>
+        <div class="cell-date">${r.date}</div>
+        <div class="cell-day">${r.day}</div>
+      </td>
+      <td class="cell-code">${r.subject_code}</td>
+      <td class="cell-name">${r.subject_name}</td>
+      <td class="cell-tech">${r.technology}</td>
+    </tr>`).join('');
+
+  const tableHTML = `
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:40px">#</th>
+            <th>Date</th>
+            <th>Code</th>
+            <th>Subject Name</th>
+            <th>Technology</th>
+          </tr>
+        </thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+    </div>`;
+
+  // Cards (mobile)
+  const cardItems = rows.map((r, i) => `
+    <div class="exam-card">
+      <div class="card-top">
+        <div class="card-subject">${r.subject_name}</div>
+        <div class="card-code">${r.subject_code}</div>
+      </div>
+      <div class="card-meta">
+        <span class="meta-chip chip-sl">#${i + 1}</span>
+        <span class="meta-chip chip-date">📅 ${r.date}</span>
+        <span class="meta-chip chip-day">${r.day}</span>
+      </div>
+    </div>`).join('');
+
+  const cardsHTML = `<div class="card-list">${cardItems}</div>`;
+
+  resultsDiv.innerHTML = summaryHTML + tableHTML + cardsHTML;
+}
+
+function resetAll() {
+  semSelect.value = '';
+  deptSelect.innerHTML = '<option value="">— Choose Department —</option>';
+  deptSelect.disabled = true;
+  searchInput.value = '';
+  searchInput.disabled = true;
+  renderResults();
+}
+
+// Initial state
+renderResults();
+</script>
+</body>
+</html>
